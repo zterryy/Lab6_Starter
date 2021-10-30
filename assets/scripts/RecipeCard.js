@@ -3,6 +3,8 @@ class RecipeCard extends HTMLElement {
     // Part 1 Expose - TODO
 
     // You'll want to attach the shadow DOM here
+    super();
+    this.attachShadow({mode: 'open'});
   }
 
   set data(data) {
@@ -87,6 +89,90 @@ class RecipeCard extends HTMLElement {
 
     // Here's the root element that you'll want to attach all of your other elements to
     const card = document.createElement('article');
+
+    
+    this.shadowRoot.appendChild(card);
+    this.shadowRoot.appendChild(styleElem);
+
+    var img1 = document.createElement('img');
+    card.appendChild(img1);
+    img1.src = searchForKey(data,'thumbnailUrl');
+    img1.alt = "Recipe Title";
+
+    var p1 = document.createElement('p');
+    var a1 = document.createElement('a');
+    card.appendChild(p1);
+    p1.appendChild(a1);
+    a1.innerHTML = searchForKey(data,'headline');
+    a1.href = getUrl(data);
+    p1.classList.add("title");
+
+    var p2 = document.createElement('p');
+    card.appendChild(p2);
+    p2.innerHTML = getOrganization(data);
+    p2.classList.add("organization");
+
+    var div1 = document.createElement('div');
+    card.appendChild(div1);
+    div1.classList.add("rating");
+    
+    if(searchForKey(data,'aggregateRating')==null){
+      var span1 = document.createElement('span');
+      span1.innerHTML = 'No Reviews';
+      div1.appendChild(span1);
+    }
+    else{
+      var span1 = document.createElement('span');
+      var span2 = document.createElement('span');
+      span1.innerHTML = searchForKey(data,'aggregateRating')['ratingValue'];
+      span2.innerHTML = '('+ searchForKey(data,'aggregateRating')['ratingCount']+')';
+      var img2 = document.createElement('img');
+      switch (Math.round(searchForKey(data, 'aggregateRating')['ratingValue'])) {
+        case 0:
+          img2.src = "/assets/images/icons/0-star.svg";
+          img2.alt = "0 stars";
+          break;
+        case 1:
+          img2.src = "/assets/images/icons/1-star.svg";
+          img2.alt = "1 stars";
+          break;
+        case 2:
+          img2.src = "/assets/images/icons/2-star.svg";
+          img2.alt = "2 stars";
+          break;
+        case 3:
+          img2.src = "/assets/images/icons/3-star.svg";
+          img2.alt = "3 stars";
+          break;
+        case 4:
+          img2.src = "/assets/images/icons/4-star.svg";
+          img2.alt = "4 stars";
+          break;
+        case 5:
+          img2.src = "/assets/images/icons/5-star.svg";
+          img2.alt = "5 stars";
+          break;
+        default:
+          img2.src = "/assets/images/icons/0-star.svg";
+          img2.alt = "0 stars";
+      }
+      div1.appendChild(span1);
+      div1.appendChild(img2);
+      div1.appendChild(span2);
+    }
+    var time = document.createElement('time');
+    card.appendChild(time);
+    time.innerHTML = convertTime(searchForKey(data,'totalTime'));
+
+    var p3 = document.createElement('p');
+    card.appendChild(p3);
+    p3.innerHTML = createIngredientList(searchForKey(data,'recipeIngredient'));
+    p3.classList.add("ingredients");
+
+    
+
+    //console.log(Object.keys(data));
+
 
     // Some functions that will be helpful here:
     //    document.createElement()

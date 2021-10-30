@@ -5,7 +5,10 @@
 const recipes = [
   'https://introweb.tech/assets/json/ghostCookies.json',
   'https://introweb.tech/assets/json/birthdayCake.json',
-  'https://introweb.tech/assets/json/chocolateChip.json'
+  'https://introweb.tech/assets/json/chocolateChip.json',
+  '/assets/recipes/local1.json',
+  '/assets/recipes/local2.json',
+  '/assets/recipes/local3.json'
 ];
 
 // Once all of the recipes that were specified above have been fetched, their
@@ -38,11 +41,30 @@ async function fetchRecipes() {
     // for the keys. Once everything in the array has been successfully fetched, call the resolve(true)
     // callback function to resolve this promise. If there's any error fetching any of the items, call
     // the reject(false) function.
+    for (let i = 0; i < recipes.length; i++) {
+      fetch(recipes[i])
+        .then(response => response.json())
+        .then(out => {recipeData[i] = out;
+          if(Object.keys(recipeData).length == recipes.length){
+            resolve(true);
+          }
+      })
+        .catch(data => {
+          console.log(data);
+          reject(false);
+        }
+        )
+    }
+    //console.log("aaa",recipeData);
+    
+    
+    //console.log(recipeData[0].length);
 
     // For part 2 - note that you can fetch local files as well, so store any JSON files you'd like to fetch
     // in the recipes folder and fetch them from there. You'll need to add their paths to the recipes array.
 
     // Part 1 Expose - TODO
+
   });
 }
 
@@ -52,7 +74,17 @@ function createRecipeCards() {
   // files with the recipeData Object above. Make sure you only display the 
   // three recipes we give you, you'll use the bindShowMore() function to
   // show any others you've added when the user clicks on the "Show more" button.
+  var main = document.querySelector("main");
 
+  for (let i = 0; i < 3; i++) {
+    var recpObj = document.createElement("recipe-card");
+    recpObj.data = recipeData[i];
+    main.appendChild(recpObj);
+  }
+  //var recpObj = document.createElement("recipe-card");
+  //ulObj.innerHTML = "aaa"
+  //main.appendChild(ulObj);
+  
   // Part 1 Expose - TODO
 }
 
@@ -63,6 +95,27 @@ function bindShowMore() {
   // that were fetched. You should fetch every recipe in the beginning, whether you
   // display it or not, so you don't need to fetch them again. Simply access them
   // in the recipeData object where you stored them/
+
+  var button = document.querySelector('button');
+  button.addEventListener('click',function(){
+    if(button.innerHTML == "Show more"){
+      button.innerHTML = "Show less";
+      var main = document.querySelector("main");
+      for (let i = 3; i < 6; i++) {
+      var recpObj = document.createElement("recipe-card");
+      recpObj.data = recipeData[i];
+      main.appendChild(recpObj);
+  }
+    }
+    else{
+      button.innerHTML = "Show more"
+      var main = document.querySelector("main");
+      for(let i=0;i<3;i++){
+        main.removeChild(main.lastChild);
+      }
+    }
+    
+  })
 
   // Part 2 Explore - TODO
 }
